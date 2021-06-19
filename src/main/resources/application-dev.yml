@@ -1,0 +1,8 @@
+spring:
+  config:
+    use-legacy-processing: true
+  profiles:
+    active: dev
+server:
+  port: 8050
+
