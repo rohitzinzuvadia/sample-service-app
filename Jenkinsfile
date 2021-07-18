@@ -9,7 +9,7 @@ pipeline{
         stage("Build Code"){
             steps{
                 sh 'mvn -DskipTests clean package'
-                sh 'tar -cvzf sample-service-app.tar.gz target/sample-service-app-1.0.jar deployment/*'
+                sh 'tar -cvzf sample-service-app.tar.gz target/sample-service-app-1.0.jar deployment/Dockerfile deployment/runApp.sh'
                 archiveArtifacts artifacts: 'sample-service-app.tar.gz', fingerprint: true
             }
         }
