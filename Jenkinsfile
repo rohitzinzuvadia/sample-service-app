@@ -19,7 +19,6 @@ pipeline{
                         copyArtifacts filter: 'sample-service-app.tar.gz', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                         sh 'tar -xvzf sample-service-app.tar.gz'
                         sh 'docker build -t 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev -f deployment/Dockerfile .'
-                        sh 'docker push 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
                     }       
             }
         }
