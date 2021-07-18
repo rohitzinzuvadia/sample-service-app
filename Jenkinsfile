@@ -17,6 +17,7 @@ pipeline{
             steps{
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         copyArtifacts filter: 'sample-service-app.tar.gz', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: lastSuccessful()
+                        sh 'tar -xvzf sample-service-app.tar.gz'
                         sh 'docker build -t 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
                         sh 'docker push 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
                     }       
