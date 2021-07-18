@@ -13,7 +13,7 @@ pipeline{
                 archiveArtifacts artifacts: 'sample-service-app.tar.gz', fingerprint: true
             }
         }
-        stage("Build and Push Docker Image"){
+        stage("Build Docker Image"){
             steps{
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         copyArtifacts filter: 'sample-service-app.tar.gz', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
@@ -23,6 +23,15 @@ pipeline{
                     }       
             }
         }
+        stage("Push Docker Image"){
+            steps{
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh '$(aws ecr get-login --no-include-email --region ap-south-1)'
+                        sh 'docker push 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
+                    }       
+            }
+        }
+        
     }
     post {
         always {
