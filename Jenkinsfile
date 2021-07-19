@@ -1,13 +1,9 @@
 pipeline{
     agent any
     stages{
-        stage("Fetch Code From GitHub"){
-            steps{
-                git 'https://github.com/rohitzinzuvadia/sample-service-app.git'
-            }
-        }
         stage("Build Code"){
             steps{
+                git 'https://github.com/rohitzinzuvadia/sample-service-app.git'
                 sh 'mvn -DskipTests clean package'
                 sh 'tar -cvzf sample-service-app.tar.gz target/sample-service-app-1.0.jar deployment/Dockerfile deployment/runApp.sh'
                 archiveArtifacts artifacts: 'sample-service-app.tar.gz', fingerprint: true
