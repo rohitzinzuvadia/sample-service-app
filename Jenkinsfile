@@ -1,11 +1,5 @@
 pipeline{
     agent any
-    environment{
-        IMAGE = 'sample-service-app:dev'
-        ECRURL = '635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app'
-        ECRCRED = 'ecr.ap-south-1:aws-personal'
-
-    }
     stages{
         stage("Build Code"){
             steps{
