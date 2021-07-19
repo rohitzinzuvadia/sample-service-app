@@ -24,25 +24,16 @@ pipeline{
                     }       
             }
         }
-        stage("Push Image"){
-            steps{
-                script{
-                    docker.withRegistory(ECRURL,ECRCRED){
-                        docker.image(IMAGE).push()
-                    }
-                }
-            }
-        }
-        /*stage("Push Docker Image"){
+        stage("Push Docker Image"){
             steps{
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh '$(aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 635489002009.dkr.ecr.ap-south-1.amazonaws.com)'
-                        //sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
+                        //sh '$(aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 635489002009.dkr.ecr.ap-south-1.amazonaws.com)'
+                        sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
                         sh 'docker push 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
 
                     }       
             }
-        }*/
+        }
         
     }
     post {
