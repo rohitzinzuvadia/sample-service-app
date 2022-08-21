@@ -30,7 +30,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }/* 
         stage("Build Image & Push"){
             steps{
                 echo "Build Image & Push"
@@ -42,7 +42,7 @@ pipeline {
                     }
                 }
             }
-        }    
+        }*/    
         stage("Deploy ECS Service"){
             steps{
                 echo "Deploy ECS Service"
