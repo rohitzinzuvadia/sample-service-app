@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+  }
+}
+provider "aws" {
+  region = "${var.region}"
+}
+
 resource "aws_cloudwatch_log_group" "sample-service-task-log" {
   name = "clg-${var.env}-${var.serviceName}"
   retention_in_days =  14  
