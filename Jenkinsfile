@@ -21,6 +21,7 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
                     script{
                         dir('deployment/terraform/ecr') {
+                            sh 'docker rm ${account_name}/sample-service-app:dev'
                             sh 'terraform init -reconfigure -backend-config=backend-dev-config.tfvars'
                             sh 'terraform plan'
                             //sh 'terraform apply -auto-approve'
