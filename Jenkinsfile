@@ -1,37 +1,72 @@
-pipeline{
+def ECR_REPO
+pipeline {
     agent any
-    stages{
-        stage("Build Code"){
-            steps{
-                git 'https://github.com/rohitzinzuvadia/sample-service-app.git'
-                sh 'mvn -DskipTests clean package'
-                sh 'tar -cvzf sample-service-app.tar.gz target/sample-service-app-1.0.jar deployment/Dockerfile deployment/runApp.sh'
-                archiveArtifacts artifacts: 'sample-service-app.tar.gz', fingerprint: true
-            }
-        }
-        stage("Build Docker Image"){
-            steps{
-                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        copyArtifacts filter: 'sample-service-app.tar.gz', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-                        sh 'tar -xvzf sample-service-app.tar.gz'
-                        sh 'docker build -t 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev -f deployment/Dockerfile .'
-                    }       
-            }
-        }
-        stage("Push Docker Image"){
-            steps{
-                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-personal', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
-                        sh 'docker push 635489002009.dkr.ecr.ap-south-1.amazonaws.com/sample-service-app:dev'
-
-                    }       
-            }
-        }
-
+    environment{
+        dockerHome = tool 'myDocker'
+        mavenHome = tool 'myMaven'
+        PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
     }
-    post {
-        always {
-          cleanWs()
+    stages{
+        stage("Code Build"){
+            steps{
+                git branch: 'develop', url: 'https://github.com/rohitzinzuvadia/sample-service-app'
+                sh 'mvn clean package -DskipTests=True'
+            }
+        }
+        stage("Create ECR "){
+            options {
+                skipDefaultCheckout()
+            }
+            steps{
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
+                    script{
+                        dir('deployment/terraform/ecr') {
+                            sh 'terraform init -backend-config=backend-dev-config.tfvars'
+                            sh 'terraform plan'
+                            sh 'terraform apply -auto-approve'
+                        }
+                    }
+                }
+            }
+        }
+        stage("Build Image & Push"){
+            steps{
+                echo "Build Image & Push"
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
+                    script{
+                        sh '$(aws ecr get-login --no-include-email --region ap-south-1)'
+                        sh 'docker build -t ${account_name}/sample-service-app:dev -f deployment/Docker/Dockerfile .'
+                        sh 'docker push ${account_name}/sample-service-app:dev'
+                    }
+                }
+            }
+        }    
+        stage("Deploy ECS Service"){
+            steps{
+                echo "Deploy ECS Service"
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
+                    script{
+                        dir('deployment/terraform/ecs') {
+                            sh 'terraform init -backend-config=backend-dev-config.tfvars'
+                            sh 'terraform validate'
+                            sh 'terraform plan'
+                            sh 'terraform apply -auto-approve'
+                            //sh 'terraform destroy -auto-approve'
+                        }
+                    }
+                }    
+            }
+        }
+    }
+    post{
+        always{
+            echo "========always========"
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
         }
     }
 }
