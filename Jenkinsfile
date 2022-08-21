@@ -7,12 +7,13 @@ pipeline {
         PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
     }
     stages{
+        /* 
         stage("Code Build"){
             steps{
                 git branch: 'develop', url: 'https://github.com/rohitzinzuvadia/sample-service-app'
                 sh 'mvn clean package -DskipTests=True'
             }
-        }
+        }*/
         stage("Create ECR "){
             options {
                 skipDefaultCheckout()
@@ -21,11 +22,10 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
                     script{
                         dir('deployment/terraform/ecr') {
-                            sh 'docker rm ${ecrPath}:dev'
                             sh 'terraform init -reconfigure -backend-config=backend-dev-config.tfvars'
                             sh 'terraform plan'
-                            //sh 'terraform apply -auto-approve'
-                            sh 'terraform destroy -auto-approve'
+                            sh 'terraform apply -auto-approve'
+                            //sh 'terraform destroy -auto-approve'
                         }
                     }
                 }
