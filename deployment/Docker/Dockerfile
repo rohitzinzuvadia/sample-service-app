@@ -8,4 +8,4 @@ COPY deployment/runApp /app/bin
 
 WORKDIR /app/bin
 
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["/bin/bash"]
