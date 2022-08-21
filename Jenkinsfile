@@ -47,7 +47,7 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS-PERSONAL']]) {
                     script{
                         dir('deployment/terraform/ecs') {
-                            sh 'terraform init -backend-config=backend-dev-config.tfvars'
+                            sh 'terraform init -reconfigure -backend-config=backend-dev-config.tfvars'
                             sh 'terraform validate'
                             sh 'terraform plan'
                             sh 'terraform apply -auto-approve'
