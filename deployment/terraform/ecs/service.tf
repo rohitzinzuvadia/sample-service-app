@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "sample-service-task" {
 resource "aws_ecs_service" "sample-service-app" {
     name            = "${var.serviceName}-${var.env}"
   cluster         = "${var.cluster}"
-  task_definition = "${aws_ecs_task_definition.sample-ecs-task.arn}"
+  task_definition = "${aws_ecs_task_definition.sample-service-task.arn}"
   desired_count   = "${var.desiredCount}"
   deployment_maximum_percent=200
   deployment_minimum_healthy_percent=0
