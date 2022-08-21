@@ -23,7 +23,8 @@ pipeline {
                         dir('deployment/terraform/ecr') {
                             sh 'terraform init -reconfigure -backend-config=backend-dev-config.tfvars'
                             sh 'terraform plan'
-                            sh 'terraform apply -auto-approve'
+                            //sh 'terraform apply -auto-approve'
+                            sh 'terraform destroy -auto-approve'
                         }
                     }
                 }
@@ -50,8 +51,8 @@ pipeline {
                             sh 'terraform init -reconfigure -backend-config=backend-dev-config.tfvars'
                             sh 'terraform validate'
                             sh 'terraform plan'
-                            sh 'terraform apply -auto-approve'
-                            //sh 'terraform destroy -auto-approve'
+                            //sh 'terraform apply -auto-approve'
+                            sh 'terraform destroy -auto-approve'
                         }
                     }
                 }    
