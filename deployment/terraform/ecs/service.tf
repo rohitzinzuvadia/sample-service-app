@@ -42,8 +42,8 @@ resource "aws_ecs_task_definition" "sample-service-task" {
             "privileged": false,
             "portMappings": [
                 {
-                    "containerPort": 80,
-                    "hostPort": 80,
+                    "containerPort": 8080,
+                    "hostPort": 8080,
                     "protocol": "tcp"
                 }
             ],
