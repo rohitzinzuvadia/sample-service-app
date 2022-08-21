@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "sample-service-task" {
                 "/bin/bash"
             ],
             "command": [
-                "/app/bin/runApp",
+                "/app/bin/startApp",
                 "${var.env}"
             ],
             "privileged": false,
